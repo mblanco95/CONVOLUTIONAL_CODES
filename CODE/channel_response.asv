@@ -1,0 +1,9 @@
+function [modulated_frame_rx] = channel_response(modulated_frame_tx)
+length 
+
+noise =
+
+w = sqrt(noise_variance(EbNo_index))*randn(length(dataMod),1);
+        receivedSignal = dataMod + w;
+end
+

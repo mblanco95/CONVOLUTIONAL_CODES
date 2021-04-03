@@ -1,0 +1,56 @@
+%%
+% @file: main.m
+% @author: BLANCO CAAMANO, MARTA.
+%
+% @about: LAB #2: CONVOLUTIONAL CODES.
+%         ADVANCED TECHNIQUES IN SIGNAL PROCESSING AND COMMUNICATIONS.
+%%
+clearvars;
+
+%% DEFINE PARAMATERS.
+frame_length = 1024; % Choose the frame length.
+EbNo = 0:0.1:1.8; % Energy per bit to noise power spectral 
+                                 
+M = 2; % M = 2 for BPSK.
+Rm = log2(M); % MODULATION RATE. 
+Rc = 1/2; % CODE RATE. 
+                                            
+% Simulation parameters.                                
+MC = 10000;                        % Monte Carlo iterations.
+
+ebno = 10.^(EbNo*0.1);
+noise_variance = (2*Rm*Rc*ebno).^-1;
+
+% Monte Carlo register.
+montecarlo = zeros(length(EbNo), MC);
+% Bit error rate results.
+results = zeros(length(EbNo));
+
+% Noise variance : assuming Es = 1 for BPSK (Symbol energy normalized to 1).
+ebno = 10.^(EbNo*0.1);
+noise_variance = (2*Rm*Rc*ebno).^-1;
+
+quantizer = 3;
+frame_length = 1000;
+SNR = -10:4:30;
+
+%% BINARY FRAME.
+uncoded_frame_tx = randi([0 1], frame_length, 1);
+
+%% CONVOLUTIONAL ENCODER.
+encoded_frame_tx = convolutional_encoder(uncoded_frame_tx);
+
+%% MODULATOR
+modulated_frame_tx = bpsk_modulator(encoded_frame_tx);
+
+%% CHANNEL RESPONSE.
+modulated_frame_rx = channel_response(modulated_frame_tx);
+
+%% DEMODULATOR
+demodulated_frame_rx = bpsk_modulator(modulated_frame_rx);
+
+%% VITERBI DECODER.
+uncoded_frame_rx = viterbi_decoder(demodulated_frame_rx);
+
+
+
